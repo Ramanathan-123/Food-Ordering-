@@ -1,0 +1,139 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.HashMap;
+
+public class FoodOrderingSystem {
+
+    // Main Frame
+    JFrame frame;
+
+    // Components for Menu Panel
+    JPanel menuPanel;
+    JLabel menuLabel;
+    JCheckBox pizzaBox, burgerBox, pastaBox;
+    JButton placeOrderButton;
+
+    // Components for Order Summary
+    JPanel orderSummaryPanel;
+    JLabel orderSummaryLabel;
+    JTextArea orderSummaryArea;
+    JButton confirmOrderButton;
+
+    // Order Data
+    HashMap<String, Integer> menuItems;
+
+    public FoodOrderingSystem() {
+        // Initialize Menu Items and Prices
+        menuItems = new HashMap<>();
+        menuItems.put("Pizza", 10);
+        menuItems.put("Burger", 7);
+        menuItems.put("Pasta", 8);
+
+        // Create Frame
+        frame = new JFrame("Food Ordering System");
+        frame.setSize(400, 400);
+        frame.setLayout(new CardLayout());
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        // Initialize Components
+        initializeMenuPanel();
+        initializeOrderSummaryPanel();
+
+        // Add Panels to Frame
+        frame.add(menuPanel);
+        frame.add(orderSummaryPanel);
+
+        // Display the Frame
+        frame.setVisible(true);
+    }
+
+    private void initializeMenuPanel() {
+        menuPanel = new JPanel();
+        menuPanel.setLayout(new GridLayout(6, 1));
+
+        menuLabel = new JLabel("Select Food Items to Order:");
+        pizzaBox = new JCheckBox("Pizza - $10");
+        burgerBox = new JCheckBox("Burger - $7");
+        pastaBox = new JCheckBox("Pasta - $8");
+        placeOrderButton = new JButton("Place Order");
+
+        placeOrderButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                displayOrderSummary();
+            }
+        });
+
+        menuPanel.add(menuLabel);
+        menuPanel.add(pizzaBox);
+        menuPanel.add(burgerBox);
+        menuPanel.add(pastaBox);
+        menuPanel.add(placeOrderButton);
+    }
+
+    private void initializeOrderSummaryPanel() {
+        orderSummaryPanel = new JPanel();
+        orderSummaryPanel.setLayout(new BorderLayout());
+
+        // Order Summary Label
+        orderSummaryLabel = new JLabel("Order Summary:");
+        orderSummaryPanel.add(orderSummaryLabel, BorderLayout.NORTH);
+
+        // Order Summary Text Area
+        orderSummaryArea = new JTextArea();
+        orderSummaryArea.setEditable(false);
+        orderSummaryPanel.add(new JScrollPane(orderSummaryArea), BorderLayout.CENTER);
+
+        // Panel for the Confirm Button
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setLayout(new GridBagLayout()); // Center components in the panel
+
+        confirmOrderButton = new JButton("Confirm Order");
+        confirmOrderButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JOptionPane.showMessageDialog(frame, "Order Confirmed! Thank you.");
+                System.exit(0);
+            }
+        });
+        buttonPanel.add(confirmOrderButton); // Add the button to the center of the panel
+
+        // Add the centered button panel to the order summary panel
+        orderSummaryPanel.add(buttonPanel, BorderLayout.SOUTH);
+    }
+
+    private void displayOrderSummary() {
+        StringBuilder summary = new StringBuilder();
+        int total = 0;
+
+        if (pizzaBox.isSelected()) {
+            summary.append("Pizza - $10\n");
+            total += menuItems.get("Pizza");
+        }
+        if (burgerBox.isSelected()) {
+            summary.append("Burger - $7\n");
+            total += menuItems.get("Burger");
+        }
+        if (pastaBox.isSelected()) {
+            summary.append("Pasta - $8\n");
+            total += menuItems.get("Pasta");
+        }
+
+        if (total == 0) {
+            JOptionPane.showMessageDialog(frame, "No items selected. Please select items to order.");
+            return;
+        }
+
+        summary.append("\nTotal: $").append(total);
+
+        orderSummaryArea.setText(summary.toString());
+        menuPanel.setVisible(false);
+        orderSummaryPanel.setVisible(true);
+    }
+
+    public static void main(String[] args) {
+        new FoodOrderingSystem();
+    }
+}
